@@ -30,6 +30,7 @@ public class PublicKeyJFrame extends JFrame {
 	private JPanel contentPane;
 	private JPasswordField passwordfieldPublicKey;
 	private String publicKey;
+	static boolean b2 = false;
 
 	/**
 	 * Launch the application.
@@ -89,9 +90,8 @@ public class PublicKeyJFrame extends JFrame {
 									try {
 										Encryption encryptionObject = new Encryption();
 										
-										DbConnToAdvancedExecution dBConnToAdvancedExecutionObject2 = new DbConnToAdvancedExecution();
-										dBConnToAdvancedExecutionObject2.insertAdvancedBackupDestinationPathToDatabase();
 										
+										b2 = true;
 										encryptionObject.checkPathExistence(StaticFields.advancedBackupSourcePath,StaticFields.advancedBackupDestinationPath);
 										JOptionPane.showMessageDialog(null, "Advanced Backup was succesfully completed!");
 									} catch (IOException e1) {
@@ -131,6 +131,14 @@ public class PublicKeyJFrame extends JFrame {
 								} catch (SQLException e1) {
 									// TODO Auto-generated catch block
 									e1.printStackTrace();
+								}
+								if(b2) {
+									DbConnToAdvancedExecution dBConnToAdvancedExecutionObject2 = new DbConnToAdvancedExecution();
+									dBConnToAdvancedExecutionObject2.insertAdvancedBackupDestinationPathToDatabase();
+									System.out.println(b2);
+								}
+								else {
+									System.out.println(b2);
 								}
 							}
 

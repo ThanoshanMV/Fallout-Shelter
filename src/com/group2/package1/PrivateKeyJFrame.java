@@ -31,6 +31,7 @@ public class PrivateKeyJFrame extends JFrame {
 	private JPanel contentPane;
 	private JPasswordField passwordfieldPrivateKey;
 	private String privateKey;
+	static boolean b3 = false;
 
 	/**
 	 * Launch the application.
@@ -77,9 +78,13 @@ public class PrivateKeyJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				PrivateKeyJFrame PrivateKeyJFrameObject = new PrivateKeyJFrame();
 				PrivateKeyJFrameObject.setPrivateKey(String.valueOf(passwordfieldPrivateKey.getPassword()));
+				
+				DbConnToAdvancedExecution dBConnToAdvancedExecutionObject1 = new DbConnToAdvancedExecution();
+				b3 = dBConnToAdvancedExecutionObject1.isUserAuthorizedToRestore();
+				System.out.println(b3);
+				
 				PreparedStatement ps = null;
 				ResultSet rs = null;
-
 				try {
 					//ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForPrivateKeyJFrame);
 					ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForPrivateKeyJFrame);
@@ -93,8 +98,8 @@ public class PrivateKeyJFrame extends JFrame {
 
 					if (rs.next()) {
 
-						DbConnToAdvancedExecution dBConnToAdvancedExecutionObject1 = new DbConnToAdvancedExecution();
-						if (dBConnToAdvancedExecutionObject1.isUserAuthorizedToRestore() || true) {
+						
+						if (b3) {
 							Decryption decryptionObject1 = new Decryption();
 							try {
 								decryptionObject1.checkPathExistence(StaticFields.restoreSourcePath,

@@ -40,6 +40,7 @@ public class ForgotPasswordJFrame extends JFrame {
 	private String name;
 	private String email;
 	private String password;
+	static boolean b1 = false;
 
 	/**
 	 * Launch the application.
@@ -162,7 +163,7 @@ public class ForgotPasswordJFrame extends JFrame {
 						StaticFields.temporaryPassword = GenerateOTP.getAlphaNumericString(10);
 						StaticFields.emailAddressOfTheReceiver = forgotPasswordJFrameObject.getEmail();
 						StaticFields.userName = rs.getString("user_name");
-						StaticFields.updateTempPassAsCurrentUserPassword();
+						b1 = true;
 						JOptionPane.showMessageDialog(null, "Dont't worry. Check your email");
 						EmailSender.sendEmailForForgetPass();
 						LoginFormJFrame lf = new LoginFormJFrame();
@@ -196,6 +197,13 @@ public class ForgotPasswordJFrame extends JFrame {
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
+						}
+						if(b1) {
+							System.out.println(b1);
+							StaticFields.updateTempPassAsCurrentUserPassword();
+						}
+						else {
+							System.out.println(b1);
 						}
 					}
 			}
