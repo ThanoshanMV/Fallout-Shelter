@@ -384,7 +384,7 @@ public class StartJFrame extends JFrame {
 						}
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
-						JOptionPane.showMessageDialog(null, "Error while establishing connection.");
+						JOptionPane.showMessageDialog(null, "Error while establishing connection. Restart the application and try again.");
 					}
 					 finally {
 							try {
