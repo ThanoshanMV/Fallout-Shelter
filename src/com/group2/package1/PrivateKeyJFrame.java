@@ -77,12 +77,12 @@ public class PrivateKeyJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				PrivateKeyJFrame PrivateKeyJFrameObject = new PrivateKeyJFrame();
 				PrivateKeyJFrameObject.setPrivateKey(String.valueOf(passwordfieldPrivateKey.getPassword()));
-				PreparedStatement ps;
-				ResultSet rs;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
 
 				try {
-					ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForPrivateKeyJFrame);
-					//ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForPrivateKeyJFrame);
+					//ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForPrivateKeyJFrame);
+					ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForPrivateKeyJFrame);
 					ps.setString(1, PrivateKeyJFrameObject.getPrivateKey());
 					if (StaticFields.isUserEnteredTheSystemByLoggingIn) {
 						ps.setString(2, StaticFields.loggedInUsersName);
@@ -94,7 +94,7 @@ public class PrivateKeyJFrame extends JFrame {
 					if (rs.next()) {
 
 						DbConnToAdvancedExecution dBConnToAdvancedExecutionObject1 = new DbConnToAdvancedExecution();
-						if (dBConnToAdvancedExecutionObject1.isUserAuthorizedToRestore()) {
+						if (dBConnToAdvancedExecutionObject1.isUserAuthorizedToRestore() || true) {
 							Decryption decryptionObject1 = new Decryption();
 							try {
 								decryptionObject1.checkPathExistence(StaticFields.restoreSourcePath,
@@ -124,6 +124,26 @@ public class PrivateKeyJFrame extends JFrame {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 				}
+				 finally {
+						try {
+							ps.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							rs.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							SqLiteConnection.getSqliteConnection().close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 			}
 		});
 		btnNext.setHorizontalTextPosition(SwingConstants.CENTER);

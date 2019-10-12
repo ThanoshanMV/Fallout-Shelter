@@ -207,11 +207,11 @@ public class ChangePublicKeyJFrame extends JFrame {
 					JOptionPane.showMessageDialog(null, "Please Confirm Public Key!");
 				}
 				else {
-					PreparedStatement ps;
+					PreparedStatement ps = null;
 					String query = "UPDATE `signup` SET `user_publicKey`= ? WHERE `user_publicKey`= ? AND `user_password`= ?";	
 					try {
-						ps = MyConnection.getConnection().prepareStatement(query);
-						//ps = SqLiteConnection.getSqliteConnection().prepareStatement(query);
+						//ps = MyConnection.getConnection().prepareStatement(query);
+						ps = SqLiteConnection.getSqliteConnection().prepareStatement(query);
 						ps.setString(1,new_publickuy);
 						ps.setString(2,current_publickey);
 						ps.setString(3,current_password);
@@ -233,6 +233,20 @@ public class ChangePublicKeyJFrame extends JFrame {
 						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 					}
+					 finally {
+							try {
+								ps.close();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							try {
+								SqLiteConnection.getSqliteConnection().close();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
 				}
 				
 			}

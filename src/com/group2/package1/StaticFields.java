@@ -60,18 +60,18 @@ public class StaticFields {
 	static boolean isThePrivateKeyCorrect = false;
 
 	/* static variables in DbConnToAdvancedExecution */
-	static String sqlQueryForInsertPathToDB = "INSERT INTO `adv_backup`(`user_name`,`destination`) VALUES (?,?)";
-	static String sqlQueryForSelectAutorizedUserToRestore = "SELECT * FROM `adv_backup` WHERE `user_name`= ?";
+	
+	static String sqlQueryForSelectAutorizedUserToRestore = "SELECT * FROM `adv` WHERE `user_name`= ?";
 
 	/* static variables in SettingsJFrame */
 	static String sqlQueryForDeleteUserAccount = "DELETE FROM `signup` WHERE `user_name`= ?";
-	static String sqlQueryForDeleteUserBackupHistory = "DELETE FROM `adv_backup` WHERE `user_name`= ?";
+	static String sqlQueryForDeleteUserBackupHistory = "DELETE FROM `adv` WHERE `user_name`= ?";
 
 	/* static method for insert otp to DB */
 	static void insertOtpToDb() {
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
-			ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForStoreOTP);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForStoreOTP);
 
 			ps.setString(1, StaticFields.UserNameForAccountRetrieve);
 			ps.setString(2, StaticFields.otpForRetrieval);
@@ -83,15 +83,29 @@ public class StaticFields {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 		}
+		finally {
+			try {
+				ps.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				SqLiteConnection.getSqliteConnection().close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 	}
 
-	static boolean isSuspendedAccount() {
-		PreparedStatement ps;
+	/*static boolean isSuspendedAccount() {
+		PreparedStatement ps = null;
 		boolean isQueryExecuted = false;
-		ResultSet rs;
+		ResultSet rs = null;
 		try {
 
-			ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForSelectOtpStore);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForSelectOtpStore);
 			ps.setString(1, StaticFields.loggedInUsersName);
 			rs = ps.executeQuery();
 
@@ -107,13 +121,33 @@ public class StaticFields {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 		}
+		finally {
+			try {
+				ps.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				rs.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				SqLiteConnection.getSqliteConnection().close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
 		return isQueryExecuted;
-	}
+	}*/
 
 	static void deleteOtpStoreDbRow() {
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
-			ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForDeleteSpecifiedRow);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForDeleteSpecifiedRow);
 
 			ps.setString(1, StaticFields.loggedInUsersName);
 
@@ -124,6 +158,21 @@ public class StaticFields {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 		}
+		finally {
+			try {
+				ps.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				SqLiteConnection.getSqliteConnection().close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		
 	}
 /*	static void insertTemporaryPasswordToDb() {
 		PreparedStatement ps;
@@ -142,9 +191,9 @@ public class StaticFields {
 		}
 	} */
 	static void updateTempPassAsCurrentUserPassword() {
-		PreparedStatement ps;
+		PreparedStatement ps = null;
 		try {
-			ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForUpdateTempPassAsCurrentPassword);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForUpdateTempPassAsCurrentPassword);
 
 			ps.setString(1, StaticFields.temporaryPassword);
 			ps.setString(2, StaticFields.userName);
@@ -155,6 +204,20 @@ public class StaticFields {
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(null, "Error while establishing connection.");
+		}
+		finally {
+			try {
+				ps.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				SqLiteConnection.getSqliteConnection().close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 }

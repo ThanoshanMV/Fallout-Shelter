@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
 import javax.swing.JOptionPane;
 
@@ -14,28 +15,33 @@ public class DbConnToAdvancedExecution {
 	private String UserNameToAuthorizeRestoration;
 	void insertAdvancedBackupDestinationPathToDatabase() {
 		DbConnToAdvancedExecution dbConnToAdvancedExecutionObject = new DbConnToAdvancedExecution();
-		PreparedStatement preparedStatement;
-		{
+		PreparedStatement preparedStatement = null;
+
 			try {
-				preparedStatement = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForInsertPathToDB);
-				// preparedStatement = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForInsertPathToDB);
+				//preparedStatement = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForInsertPathToDB);
+				 String sqlQueryForInsertPathToDB = "INSERT INTO `adv`(`user_name`,`destination`) VALUES (?,?)";
+				// String sqlQueryForInsertPathToDB = "INSERT INTO `adv`(`user_name`,`destination`) VALUES ('saamy','aaru')";
+				 preparedStatement = SqLiteConnection.getSqliteConnection().prepareStatement(sqlQueryForInsertPathToDB);
 				if (StaticFields.isUserEnteredTheSystemByLoggingIn) {
-					 preparedStatement.setString(1, StaticFields.loggedInUsersName);
-					dbConnToAdvancedExecutionObject.setUserNameToInsertInDB(StaticFields.loggedInUsersName);
+					System.out.println("Logged : "+StaticFields.loggedInUsersName);
+					preparedStatement.setString(1, StaticFields.loggedInUsersName);
 				} else {
-					 preparedStatement.setString(1, StaticFields.newlyRegisteredUsersName);
-					dbConnToAdvancedExecutionObject.setUserNameToInsertInDB(StaticFields.newlyRegisteredUsersName);
+					System.out.println("Not Logged : "+StaticFields.newlyRegisteredUsersName);
+					preparedStatement.setString(1, StaticFields.newlyRegisteredUsersName);
 				}
 				File advBackupSourceFile = new File(StaticFields.advancedBackupSourcePath);
 				if(advBackupSourceFile.isFile()) {
 					String pathWithUserName =StaticFields.advancedBackupDestinationPath + dbConnToAdvancedExecutionObject.getUserNameToInsertInDB();
-					 preparedStatement.setString(2, pathWithUserName);
+					preparedStatement.setString(2, pathWithUserName);
+					 System.out.println(pathWithUserName);
+					 System.out.println(sqlQueryForInsertPathToDB);
 				}
 				else {
-					 preparedStatement.setString(2, StaticFields.advancedBackupDestinationPath);
+					preparedStatement.setString(2, StaticFields.advancedBackupDestinationPath);
+					 System.out.println("Directoryyyyyyyy "+StaticFields.advancedBackupDestinationPath);
+					 System.out.println(sqlQueryForInsertPathToDB);
 				}
-				
-				if ( preparedStatement.executeUpdate() > 0) {
+				if (preparedStatement.executeUpdate() > 0) {
 					JOptionPane.showMessageDialog(null, "Destination insertion was successful!!");
 				}
 				else {
@@ -44,20 +50,37 @@ public class DbConnToAdvancedExecution {
 
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(null, "Error while establishing connection.");
+				JOptionPane.showMessageDialog(null, "Error while establishing connection in inserteting");
 			}
+			catch (Exception x) {
+				JOptionPane.showMessageDialog(null, "Game On");
+			}
+			 finally {
+					try {
+						preparedStatement.close();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						SqLiteConnection.getSqliteConnection().close();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 
 		}
-	}
+
 
 	boolean isUserAuthorizedToRestore() {
 		DbConnToAdvancedExecution object1 = new DbConnToAdvancedExecution();
 		object1.setRestoreSourcePathMatched(false);
-		PreparedStatement ps;
-		ResultSet rs;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 		try {
-			ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForSelectAutorizedUserToRestore);
-			//ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForSelectAutorizedUserToRestore);
+			//ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForSelectAutorizedUserToRestore);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForSelectAutorizedUserToRestore);
 			if (StaticFields.isUserEnteredTheSystemByLoggingIn) {
 				ps.setString(1, StaticFields.loggedInUsersName);
 				object1.setUserNameToAuthorizeRestoration(StaticFields.loggedInUsersName);
@@ -86,6 +109,26 @@ public class DbConnToAdvancedExecution {
 		catch (SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 		}
+		 finally {
+				try {
+					ps.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					rs.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					SqLiteConnection.getSqliteConnection().close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		return object1.isRestoreSourcePathMatched();
 	}
 

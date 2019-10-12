@@ -72,11 +72,11 @@ public class PublicKeyJFrame extends JFrame {
 						PublicKeyJFrame PublicKeyJFrameObject = new PublicKeyJFrame();
 						PublicKeyJFrameObject.setPublicKey(String.valueOf(passwordfieldPublicKey.getPassword()));
 
-						PreparedStatement ps;
-						ResultSet rs;
+						PreparedStatement ps =null;
+						ResultSet rs = null;
 						try {
-							ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForPublicKeyJFrame);
-						//	ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForPublicKeyJFrame);
+							//ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForPublicKeyJFrame);
+							ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForPublicKeyJFrame);
 							ps.setString(1, PublicKeyJFrameObject.getPublicKey());
 							if (StaticFields.isUserEnteredTheSystemByLoggingIn) {
 								ps.setString(2, StaticFields.loggedInUsersName);
@@ -88,8 +88,10 @@ public class PublicKeyJFrame extends JFrame {
 							if (rs.next()) {
 									try {
 										Encryption encryptionObject = new Encryption();
+										
 										DbConnToAdvancedExecution dBConnToAdvancedExecutionObject2 = new DbConnToAdvancedExecution();
 										dBConnToAdvancedExecutionObject2.insertAdvancedBackupDestinationPathToDatabase();
+										
 										encryptionObject.checkPathExistence(StaticFields.advancedBackupSourcePath,StaticFields.advancedBackupDestinationPath);
 										JOptionPane.showMessageDialog(null, "Advanced Backup was succesfully completed!");
 									} catch (IOException e1) {
@@ -111,6 +113,26 @@ public class PublicKeyJFrame extends JFrame {
 							// TODO Auto-generated catch block
 							JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 						}
+						 finally {
+								try {
+									ps.close();
+								} catch (SQLException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								try {
+									rs.close();
+								} catch (SQLException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								try {
+									SqLiteConnection.getSqliteConnection().close();
+								} catch (SQLException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
 
 					}
 				});

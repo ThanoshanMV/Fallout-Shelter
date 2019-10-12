@@ -212,26 +212,35 @@ public class LoginFormJFrame extends JFrame {
 				LoginFormJFrame loginFormJFrameObject1 = new LoginFormJFrame();
 				loginFormJFrameObject1.setName(textFieldName.getText());
 				loginFormJFrameObject1.setPassword( String.valueOf(passwordFieldPassword.getPassword()));
-				PreparedStatement ps;
-				PreparedStatement ps1;
-				ResultSet rs;
-				ResultSet rs1;
+				PreparedStatement ps = null;
+				//PreparedStatement ps1 = null;
+				ResultSet rs = null;
+				//ResultSet rs1 = null;
 				try {
 					
-					ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForLogIn);	
-					//ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForLogIn);
+					//ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForLogIn);	
+					ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForLogIn);
 					ps.setString(1, loginFormJFrameObject1.getName());
 					ps.setString(2, loginFormJFrameObject1.getPassword());
 					rs = ps.executeQuery();
 					
-					ps1 = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForAttempt);
-					//ps1 = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForAttempt);
+					//ps1 = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForAttempt);
+					/*ps1 = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForAttempt);
 					ps1.setString(1, loginFormJFrameObject1.getName());
-					rs1 = ps1.executeQuery();
+					rs1 = ps1.executeQuery();*/
 					
 					if(rs.next()) {
-						StaticFields.loggedInUsersName = loginFormJFrameObject1.getName();
-						if(StaticFields.isSuspendedAccount()) {
+						StaticFields.emailAddressOfTheReceiver = rs.getString("user_email");
+						JOptionPane.showMessageDialog(null, "Check your email,We've sent you a 4-digit code.");
+						EmailSender.sendEmailOTP();
+						StaticFields.isUserEnteredTheSystemByLoggingIn = true;
+						StaticFields.loggedInUsersName = rs.getString("user_name");
+						ConformationJFrame conformObject2 = new ConformationJFrame();
+						conformObject2.setVisible(true);
+						//t.setSize(450,500);
+						conformObject2.setLocationRelativeTo(null);
+						dispose();
+					/*	if(StaticFields.isSuspendedAccount()) {
 							JOptionPane.showMessageDialog(null,"Your account is suspended. Please provide the retrieval code.");
 							StaticFields.isUserEnteredTheSystemByLoggingIn = true;
 							RetrievalJFrame retrievalJFrameObject = new RetrievalJFrame();
@@ -250,9 +259,9 @@ public class LoginFormJFrame extends JFrame {
 							//t.setSize(450,500);
 							conformObject2.setLocationRelativeTo(null);
 							dispose();
-						}	
+						}	*/
 					}
-					else if(rs1.next()) {
+					/*else if(rs1.next()) {
 						StaticFields.loggedInUsersName = loginFormJFrameObject1.getName();
 						if(StaticFields.isSuspendedAccount()) {
 							System.out.println("The account is suspended!. So don't count attempts.");
@@ -262,13 +271,13 @@ public class LoginFormJFrame extends JFrame {
 							System.out.println("The account isn't suspended!. So count attempts.");
 							attempts --;
 						}
-						} 
+						} */
 					
 					else {
 						JOptionPane.showMessageDialog(null, "Check Name or Password.");
 						
 					}
-					if(attempts == 2) {
+					/*if(attempts == 2) {
 						JOptionPane.showMessageDialog(null, rs1.getString("user_name")+", you have "+attempts+" attempst(s) left!.");
 					}
 					if(attempts == 0) {
@@ -284,13 +293,45 @@ public class LoginFormJFrame extends JFrame {
 					if(attempts == 1) {
 						JOptionPane.showMessageDialog(null, rs1.getString("user_name")+", you have "+attempts+" attempst(s) left!.");
 						JOptionPane.showMessageDialog(null, "If you fail in the 3rd and final attempt your account will be suspended due to our security protocols");
-					}
+					}*/
 				}
 			
 				catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 				}
+				 finally {
+						try {
+							ps.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							rs.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					/*	try {
+							ps1.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							rs1.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}*/
+						try {
+							SqLiteConnection.getSqliteConnection().close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 				
 				
 			}

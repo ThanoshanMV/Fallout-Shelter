@@ -13,8 +13,8 @@ public class UserExistence {
 		boolean checkUserName = false;
 		String query = "SELECT * FROM `signup` WHERE `user_name`= ?";
 		try {
-			ps = MyConnection.getConnection().prepareStatement(query);
-			//ps = SqLiteConnection.getSqliteConnection().prepareStatement(query);
+			//ps = MyConnection.getConnection().prepareStatement(query);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(query);
 			ps.setString(1, username);
 
 			rs = ps.executeQuery();
@@ -35,8 +35,8 @@ public class UserExistence {
 		boolean checkUserEmail = false;
 		String query = "SELECT * FROM `signup` WHERE `user_email`= ?";
 		try {
-			ps = MyConnection.getConnection().prepareStatement(query);
-			//ps = SqLiteConnection.getSqliteConnection().prepareStatement(query);
+			//ps = MyConnection.getConnection().prepareStatement(query);
+			ps = SqLiteConnection.getSqliteConnection().prepareStatement(query);
 			ps.setString(1, email);
 
 			rs = ps.executeQuery();

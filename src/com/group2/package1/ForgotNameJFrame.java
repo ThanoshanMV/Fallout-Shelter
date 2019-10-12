@@ -95,12 +95,12 @@ public class ForgotNameJFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ForgotNameJFrame forgotNameJFrameObject = new ForgotNameJFrame();
 				forgotNameJFrameObject.setEmail(textFieldEmail.getText());
-				PreparedStatement ps;
-				ResultSet rs;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
 				
 				try {
-					ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForForgetNameJFrame);
-					//ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForForgetNameJFrame);
+					//ps = MyConnection.getConnection().prepareStatement(StaticFields.sqlQueryForForgetNameJFrame);
+					ps = SqLiteConnection.getSqliteConnection().prepareStatement(StaticFields.sqlQueryForForgetNameJFrame);
 
 					ps.setString(1, forgotNameJFrameObject.getEmail());
 				
@@ -128,6 +128,26 @@ public class ForgotNameJFrame extends JFrame {
 					// TODO Auto-generated catch block
 					JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 				}
+				 finally {
+						try {
+							ps.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							rs.close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						try {
+							SqLiteConnection.getSqliteConnection().close();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 			}
 		});
 		

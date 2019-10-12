@@ -20,6 +20,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;
+
+
+
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -56,6 +59,8 @@ public class StartJFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public StartJFrame() {
+		SqLiteConnection.createSignUpTable();
+		SqLiteConnection.createOtpTable();
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 660, 554);
 
@@ -352,11 +357,11 @@ public class StartJFrame extends JFrame {
 				} 
 
 				else {
-					PreparedStatement ps;
+					PreparedStatement ps = null;
 					objectOneOfStartJFrame.setQuery(StaticFields.sqlQueryForRegistration);
 					try {
-						ps = MyConnection.getConnection().prepareStatement(objectOneOfStartJFrame.getQuery());
-					//	ps = SqLiteConnection.getSqliteConnection().prepareStatement(objectOneOfStartJFrame.getQuery());
+						//ps = MyConnection.getConnection().prepareStatement(objectOneOfStartJFrame.getQuery());
+						ps = SqLiteConnection.getSqliteConnection().prepareStatement(objectOneOfStartJFrame.getQuery());
 						ps.setString(1, objectOneOfStartJFrame.getName());
 						ps.setString(2, objectOneOfStartJFrame.getPassword());
 						ps.setString(3, objectOneOfStartJFrame.getEmail());
@@ -381,6 +386,20 @@ public class StartJFrame extends JFrame {
 						// TODO Auto-generated catch block
 						JOptionPane.showMessageDialog(null, "Error while establishing connection.");
 					}
+					 finally {
+							try {
+								ps.close();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							try {
+								SqLiteConnection.getSqliteConnection().close();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
 
 				}
 			}
